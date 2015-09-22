@@ -1,8 +1,8 @@
 OBJS = linked_list.o vertex.o mesh.o main.o
 CC = g++
 DEBUG = -g
-CFLAGS = -Wall -c $(DEBUG)
-LFLAGS = -Wall $(DEBUG)
+CFLAGS = -Wall -std=gnu++0x -c $(DEBUG)
+LFLAGS = -Wall -std=gnu++0x $(DEBUG)
 BUILDDIR = _build
 
 all: prog clean
