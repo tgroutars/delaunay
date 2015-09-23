@@ -11,8 +11,17 @@ class Mesh {
     // Array of Vertices in the mesh
     Vertex *vertices_;
 
+    // Defines an outer rectangle
+    float x_min_;
+    float x_max_;
+    float y_min_;
+    float y_max_;
+
     // Initialize array of vertices from file
     void read_file(const char*);
+
+    // Move points randomly to avoid colinear points
+    void shake();
 
   public:
 

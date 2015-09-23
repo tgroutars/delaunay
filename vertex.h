@@ -14,6 +14,7 @@ class Vertex {
     Vertex (float, float, float);
     ~Vertex ();
     friend std::ostream& operator<<(std::ostream&, const Vertex);
+    friend class Mesh;
 };
 
 #endif // MESH_VERTEX_H_
