@@ -11,6 +11,13 @@ Mesh::~Mesh() {
   }
 }
 
+void Mesh::triangulate(const char* filename) {
+  read_file(filename);
+  for (int i=0; i<size_; i++) {
+    cout << vertices_[i] << endl;
+  }
+}
+
 void Mesh::read_file(const char* filename) {
   size_ = 0;
   ifstream points_file (filename);

@@ -5,8 +5,6 @@
 
 using namespace std;
 
-class Vertex;
-
 class Vertex {
     float position_[2];
     float height_;
@@ -15,7 +13,7 @@ class Vertex {
     Vertex () : neighbors_(nullptr) {}
     Vertex (float, float, float);
     ~Vertex ();
-    void print ();
+    friend std::ostream& operator<<(std::ostream&, const Vertex);
 };
 
 #endif // MESH_VERTEX_H_

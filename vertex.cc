@@ -12,8 +12,9 @@ Vertex::Vertex(float x, float y, float z) {
 
 Vertex::~Vertex() {}
 
-void Vertex::print() {
-  cout << "\nPoint" << endl;
-  cout << "x : " << position_[0] << endl;
-  cout << "y : " << position_[1] << endl;
+std::ostream& operator<<(std::ostream& os, const Vertex vertex) {
+  return os << "Point" << endl
+            << "x : "  << vertex.position_[0] << endl
+            << "y : "  << vertex.position_[1] << endl
+            << "z : "  << vertex.height_ << endl;
 }

@@ -11,7 +11,7 @@ const char *filename = "10.in";
 int main(int argc, char *argv[]) {
 
   Mesh *mesh = new Mesh;
-  mesh->read_file(filename);
+  mesh->triangulate(filename);
 
   delete mesh;
 }
