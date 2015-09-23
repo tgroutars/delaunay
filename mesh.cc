@@ -16,8 +16,8 @@ Mesh::~Mesh() {
   }
 }
 
-void Mesh::triangulate(const char* filename) {
-  read_file(filename);
+void Mesh::Triangulate(const char* filename) {
+  ReadFile(filename);
   for (int i=0; i<size_; i++) {
     cout << vertices_[i] << endl;
   }
@@ -25,10 +25,10 @@ void Mesh::triangulate(const char* filename) {
   cout << x_max_ << endl;
   cout << y_min_ << endl;
   cout << y_max_ << endl;
-  shake();
+  Shake();
 }
 
-void Mesh::read_file(const char* filename) {
+void Mesh::ReadFile(const char* filename) {
   size_ = 0;
   ifstream points_file (filename);
 
@@ -75,7 +75,7 @@ void Mesh::read_file(const char* filename) {
 
 }
 
-void Mesh::shake() {
+void Mesh::Shake() {
   int i;
   float dx_max = (x_max_ - x_min_) * 1e-8,
         dy_max = (y_max_ - y_min_) * 1e-8;

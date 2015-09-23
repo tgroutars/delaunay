@@ -18,10 +18,10 @@ class Mesh {
     float y_max_;
 
     // Initialize array of vertices from file
-    void read_file(const char*);
+    void ReadFile(const char*);
 
     // Move points randomly to avoid colinear points
-    void shake();
+    void Shake();
 
   public:
 
@@ -32,7 +32,7 @@ class Mesh {
     ~Mesh();
 
     // Generate Delaunay Triangulation
-    void triangulate(const char*);
+    void Triangulate(const char*);
 };
 
 #endif // MESH_MESH_H_
