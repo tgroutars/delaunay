@@ -18,13 +18,7 @@ Mesh::~Mesh() {
 
 void Mesh::Triangulate(const char* filename) {
   ReadFile(filename);
-  for (int i=0; i<size_; i++) {
-    cout << vertices_[i] << endl;
-  }
-  cout << x_min_ << endl;
-  cout << x_max_ << endl;
-  cout << y_min_ << endl;
-  cout << y_max_ << endl;
+
   Shake();
 }
 

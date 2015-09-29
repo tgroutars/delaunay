@@ -1,14 +1,16 @@
 OBJS = linked_list.o vertex.o mesh.o main.o
 CC = g++
 DEBUG = -g
+GLLIBS = -lGLEW -lglfw3 -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread
 CFLAGS = -Wall -std=gnu++0x -c $(DEBUG)
 LFLAGS = -Wall -std=gnu++0x $(DEBUG)
 BUILDDIR = _build
+EXEC = $(BUILDDIR)/mesh_gen
 
-all: prog clean
+all: prog clean run
 
 prog: $(OBJS)
-	$(CC) $(LFLAGS) $(OBJS) -o $(BUILDDIR)/mesh_gen
+	$(CC) $(LFLAGS) $(OBJS) -o $(EXEC) $(GLLIBS)
 
 main.o: main.h main.cc
 	$(CC) $(CFLAGS) main.cc
@@ -24,3 +26,6 @@ mesh.o: mesh.h mesh.cc vertex.h
 
 clean:
 	rm -f *.o
+
+run:
+	$(EXEC)

@@ -31,6 +31,14 @@ class Mesh {
     // Destructor
     ~Mesh();
 
+    // Getters
+    int size() const { return size_; }
+    Vertex* vertices() const { return vertices_; }
+    float x_max() const { return x_max_; }
+    float x_min() const { return x_min_; }
+    float y_max() const { return y_max_; }
+    float y_min() const { return y_min_; }
+
     // Generate Delaunay Triangulation
     void Triangulate(const char*);
 };
