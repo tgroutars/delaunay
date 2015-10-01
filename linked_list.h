@@ -2,9 +2,13 @@
 #define MESH_LINKEDLIST_H_
 
 template <class T>
-class LinkedList {
+class DoublyLinkedList {
     T *data;
-    LinkedList *next;
+    DoublyLinkedList *next_;
+    DoublyLinkedList *previous_;
+  public:
+    DoublyLinkedList* next() { return next_; }
+    DoublyLinkedList* previous() { return previous_; }
 };
 
 #endif // MESH_LINKEDLIST_H_

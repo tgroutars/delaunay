@@ -8,9 +8,9 @@ using namespace std;
 class Vertex {
     float position_[2];
     float height_;
-    LinkedList<Vertex> *neighbors_;
+    DoublyLinkedList<int> *edges_;
   public:
-    Vertex () : neighbors_(nullptr) {}
+    Vertex () : edges_(nullptr) {}
     Vertex (float, float, float);
     ~Vertex ();
     float X() const { return position_[0]; }

@@ -7,7 +7,7 @@ Vertex::Vertex(float x, float y, float z) {
   position_[0] = x;
   position_[1] = y;
   height_ = z;
-  neighbors_ = nullptr;
+  edges_ = nullptr;
 }
 
 Vertex::~Vertex() {}

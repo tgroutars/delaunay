@@ -10,8 +10,6 @@
 
 using namespace std;
 
-// Prototypes
-void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
 // Window size
 const GLuint WIDTH = 800, HEIGHT = 600;
