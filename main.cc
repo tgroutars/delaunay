@@ -29,7 +29,7 @@ const GLchar* fragmentShaderSource = "#version 330 core\n"
   "}\n\0";
 
 
-const char *filename = "10.in";
+const char *filename = "2.in";
 
 int main(int argc, char *argv[]) {
 
@@ -99,8 +99,8 @@ int main(int argc, char *argv[]) {
           y_max = mesh->y_max(),
           y_min = mesh->y_min();
   for (int i=0; i<size; i++) {
-    vertices[i * 3] = (2. * vertices_objs[i].X() + (x_max + x_min)) / (x_max - x_min);
-    vertices[i * 3 + 1] = (2. * vertices_objs[i].Y() + (y_max + y_min)) / (y_max - y_min);
+    vertices[i * 3] = (2. * vertices_objs[i].X() - (x_max + x_min)) / (x_max - x_min);
+    vertices[i * 3 + 1] = (2. * vertices_objs[i].Y() - (y_max + y_min)) / (y_max - y_min);
     vertices[i * 3 + 2] = 0.0f;
   }
 
