@@ -93,15 +93,15 @@ int main(int argc, char *argv[]) {
   // Vertices to display
   int size = mesh->size();
   GLfloat *vertices = new float[size * 3];
-  Vertex *vertices_objs = mesh->vertices();
+  GLfloat const *mesh_vertices = mesh->vertices();
   GLfloat x_max = mesh->x_max(),
           x_min = mesh->x_min(),
           y_max = mesh->y_max(),
           y_min = mesh->y_min();
   for (int i=0; i<size; i++) {
-    vertices[i * 3] = (2. * vertices_objs[i].X() - (x_max + x_min)) / (x_max - x_min);
-    vertices[i * 3 + 1] = (2. * vertices_objs[i].Y() - (y_max + y_min)) / (y_max - y_min);
-    vertices[i * 3 + 2] = 0.0f;
+    vertices[i * 3] = (2. * mesh_vertices[i * 2] - (x_max + x_min)) / (x_max - x_min);
+    vertices[i * 3 + 1] = (2. * mesh_vertices[i * 2 + 1] - (y_max + y_min)) / (y_max - y_min);
+    vertices[i * 3 + 2] = 0.f;
   }
 
   // Vertex Buffer Object

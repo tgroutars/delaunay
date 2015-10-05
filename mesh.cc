@@ -9,17 +9,36 @@
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 
+using namespace std;
 
 Mesh::~Mesh() {
   if (vertices_ != nullptr) {
     delete[] vertices_;
   }
+  if (edges_ != nullptr) {
+    delete[] edges_;
+  }
 }
 
 void Mesh::Triangulate(const char* filename) {
   ReadFile(filename);
-
   Shake();
+  DelaunayDC(0, size_);
+
+}
+
+void Mesh::DelaunayDC(int start, int end) {
+  int size = end - start;
+  if (size < 2)
+    return;
+  if (size == 2)
+    BuildEdge(start, end - 1);
+    return;
+}
+
+void Mesh::BuildEdge(int p1, int p2) {
+  edges_[p1].Prepend(p2);
+  edges_[p2].Append(p1);
 }
 
 void Mesh::ReadFile(const char* filename) {
@@ -28,7 +47,7 @@ void Mesh::ReadFile(const char* filename) {
 
   if (points_file.is_open()) {
     int i;
-    double x, y, z;
+    float x, y;
     float dx, dy;
     string line;
 
@@ -39,15 +58,19 @@ void Mesh::ReadFile(const char* filename) {
     points_file.clear();
     points_file.seekg(0, ios::beg);
 
-    vertices_ = new Vertex[size_];
-    points_file >> x >> y >> z;
-    vertices_[0] = Vertex(x, y, z);
+    edges_ = new DoublyLinkedList<int>[size_];
+    vertices_ = new float[size_ * 2];
+
+    points_file >> x >> y;
+    vertices_[0] = x;
+    vertices_[1] = y;
     x_min_ = x_max_= x;
     y_min_ = y_max_= y;
 
     for (i=1; i<size_; i++) {
-      points_file >> x >> y >> z;
-      vertices_[i] = Vertex(x, y, z);
+      points_file >> x >> y;
+      vertices_[2 * i] = x;
+      vertices_[2 * i + 1] = y;
       x_min_ = MIN(x_min_, x);
       x_max_ = MAX(x_max_, x);
       y_min_ = MIN(y_min_, y);
@@ -75,7 +98,7 @@ void Mesh::Shake() {
         dy_max = (y_max_ - y_min_) * 1e-8;
 
   for (i=0; i<size_; i++) {
-    vertices_[i].position_[0] += (((float) std::rand()) / RAND_MAX) * dx_max;
-    vertices_[i].position_[1] += (((float) std::rand()) / RAND_MAX) * dy_max;
+    vertices_[2 * i] += (((float) std::rand()) / RAND_MAX) * dx_max;
+    vertices_[2 * i + 1] += (((float) std::rand()) / RAND_MAX) * dy_max;
   }
 }

@@ -41,8 +41,8 @@ DoublyLinkedListElem<T>::DoublyLinkedListElem(
     DoublyLinkedListElem<T>* next,
     DoublyLinkedListElem<T>* previous):
         data_(data),
-        previous_(previous),
-        next_(next) {}
+        next_(next),
+        previous_(previous) {}
 
 
 // Doubly Linked List
@@ -55,7 +55,7 @@ class DoublyLinkedList {
   public:
 
     // Constructor / Destructor
-    DoublyLinkedList() : first_(0) { }
+    DoublyLinkedList() : first_(0) {}
     ~DoublyLinkedList();
     void DeleteElems(DoublyLinkedListElem<T>*);
 
