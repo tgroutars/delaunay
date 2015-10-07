@@ -98,22 +98,33 @@ int main(int argc, char *argv[]) {
           x_min = mesh->x_min(),
           y_max = mesh->y_max(),
           y_min = mesh->y_min();
-  for (int i=0; i<size; i++) {
+  int i;
+  for (i=0; i<size; i++) {
     vertices[i * 3] = (2. * mesh_vertices[i * 2] - (x_max + x_min)) / (x_max - x_min);
     vertices[i * 3 + 1] = (2. * mesh_vertices[i * 2 + 1] - (y_max + y_min)) / (y_max - y_min);
     vertices[i * 3 + 2] = 0.f;
   }
+  int n_edges = mesh->n_edges();
+  GLuint *indices = new GLuint[n_edges];
+  int const *edges = mesh->edges();
+  for (i=0; i<n_edges; i++) {
+    indices[2 * i] = edges[2 * i];
+    indices[2 * i + 1] = edges[2 * i + 1];
+  }
 
   // Vertex Buffer Object
-  GLuint VBO, VAO;
+  GLuint VBO, VAO, EBO;
   glGenVertexArrays(1, &VAO);
+  glGenBuffers(1, &EBO);
   glGenBuffers(1, &VBO);
   glBindVertexArray(VAO);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glBufferData(GL_ARRAY_BUFFER, 3 * size * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-  glEnableVertexAttribArray(0);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, 3 * size * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 
   // Main Loop
@@ -123,8 +134,10 @@ int main(int argc, char *argv[]) {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glPointSize(5.0f);
+    glLineWidth(3.0f);
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
+    glDrawElements(GL_LINES, n_edges * 2, GL_UNSIGNED_INT, 0);
     glDrawArrays(GL_POINTS, 0, size);
     glBindVertexArray(0);
     glfwSwapBuffers(window);
@@ -133,6 +146,7 @@ int main(int argc, char *argv[]) {
   // Free Memory
   glDeleteVertexArrays(1, &VAO);
   glDeleteBuffers(1, &VBO);
+  delete[] indices;
   delete[] vertices;
   delete mesh;
 

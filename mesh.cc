@@ -18,13 +18,16 @@ Mesh::~Mesh() {
   if (edges_ != nullptr) {
     delete[] edges_;
   }
+  if (edges_array_ != nullptr) {
+    delete[] edges_array_;
+  }
 }
 
 void Mesh::Triangulate(const char* filename) {
   ReadFile(filename);
   Shake();
   DelaunayDC(0, size_);
-
+  StoreEdgesArray();
 }
 
 void Mesh::DelaunayDC(int start, int end) {
@@ -100,5 +103,33 @@ void Mesh::Shake() {
   for (i=0; i<size_; i++) {
     vertices_[2 * i] += (((float) std::rand()) / RAND_MAX) * dx_max;
     vertices_[2 * i + 1] += (((float) std::rand()) / RAND_MAX) * dy_max;
+  }
+}
+
+void Mesh::StoreEdgesArray() {
+
+  int v1, i = 0;
+  n_edges_ = 0;
+  DoublyLinkedListElem<int> *edge;
+  DoublyLinkedListElem<int> *first;
+
+  for (v1=0; v1<size_; v1++) {
+    n_edges_ += edges_[i].Length();
+  }
+  n_edges_ /= 2;
+
+  edges_array_ = new int[n_edges_ * 2];
+  for (v1=0; v1<size_; v1++) {
+    edge = first = edges_[v1].first();
+    if (edge == nullptr)
+      continue;
+    do {
+      if (edge->data() > v1) {
+        edges_array_[2 * i] = v1;
+        edges_array_[2 * i + 1] = edge->data();
+        i++;
+      }
+      edge = edge->next();
+    } while (edge != first);
   }
 }

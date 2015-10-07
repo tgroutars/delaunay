@@ -21,6 +21,7 @@ class DoublyLinkedListElem {
     // Accessors
     DoublyLinkedListElem<T>* next() { return next_; }
     DoublyLinkedListElem<T>* previous() { return previous_; }
+    T data() { return data_; }
 
     // Friend class
     friend class DoublyLinkedList<T>;
@@ -59,9 +60,13 @@ class DoublyLinkedList {
     ~DoublyLinkedList();
     void DeleteElems(DoublyLinkedListElem<T>*);
 
+    DoublyLinkedListElem<T>* first() { return first_; }
+
     // Operations
     void Append(T);
     void Prepend(T);
+
+    int Length() const;
 };
 
 // Implementation
@@ -95,5 +100,20 @@ void DoublyLinkedList<T>::Prepend(T data) {
   Append(data);
   first_ = first_->previous_;
 }
+
+template <class T>
+int DoublyLinkedList<T>::Length() const {
+  if (first_ == nullptr) {
+    return 0;
+  }
+  int length = 0;
+  DoublyLinkedListElem<T> *current_elem = first_;
+  do {
+    current_elem = current_elem->next_;
+    length++;
+  } while (current_elem != first_);
+  return length;
+}
+
 
 #endif // MESH_LINKEDLIST_H_
