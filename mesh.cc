@@ -26,17 +26,33 @@ Mesh::~Mesh() {
 void Mesh::Triangulate(const char* filename) {
   ReadFile(filename);
   Shake();
-  DelaunayDC(0, size_);
+  DelaunayDC(0, size_ - 1);
   StoreEdgesArray();
 }
 
 void Mesh::DelaunayDC(int start, int end) {
-  int size = end - start;
-  if (size < 2)
+  int size = end - start + 1;
+  if (size < 2) {
     return;
-  if (size == 2)
-    BuildEdge(start, end - 1);
+  }
+  if (size == 2) {
+    BuildEdge(start, end);
     return;
+  }
+  int middle = (start + end) / 2.;
+  if (size == 3) {
+    BuildEdge(start, middle);
+    BuildEdge(middle, end);
+    BuildEdge(end, start);
+    return;
+  }
+  DelaunayDC(start, middle);
+  DelaunayDC(middle + 1, end);
+  MergeMeshes(start, middle, end);
+}
+
+void Mesh::MergeMeshes(int start, int middle, int end) {
+  return;
 }
 
 void Mesh::BuildEdge(int p1, int p2) {

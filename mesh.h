@@ -28,6 +28,7 @@ class Mesh {
 
     // Build the mesh
     void DelaunayDC(int, int);
+    void MergeMeshes(int, int, int);
     void BuildEdge(int, int);
     void StoreEdgesArray();
 
