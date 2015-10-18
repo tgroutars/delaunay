@@ -146,6 +146,7 @@ int main(int argc, char *argv[]) {
   // Free Memory
   glDeleteVertexArrays(1, &VAO);
   glDeleteBuffers(1, &VBO);
+  glDeleteBuffers(1, &EBO);
   delete[] indices;
   delete[] vertices;
   delete mesh;
@@ -155,6 +156,6 @@ int main(int argc, char *argv[]) {
 }
 
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode) {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GL_TRUE);
+  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    glfwSetWindowShouldClose(window, GL_TRUE);
 }

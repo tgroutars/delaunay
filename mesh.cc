@@ -5,6 +5,7 @@
 #include <ctime>
 
 #include "mesh.h"
+#include "robust_predicates.h"
 
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
@@ -41,9 +42,16 @@ void Mesh::DelaunayDC(int start, int end) {
   }
   int middle = (start + end) / 2.;
   if (size == 3) {
-    BuildEdge(start, middle);
-    BuildEdge(middle, end);
-    BuildEdge(end, start);
+    float is_left = TriangleArea(&vertices_[start], &vertices_[middle], &vertices_[end]);
+    if (is_left > 0) {
+      BuildEdge(start, middle);
+      BuildEdge(middle, end);
+      BuildEdge(end, start);
+    } else {
+      BuildEdge(start, end);
+      BuildEdge(end, middle);
+      BuildEdge(middle, start);
+    }
     return;
   }
   DelaunayDC(start, middle);
