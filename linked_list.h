@@ -61,6 +61,7 @@ class DoublyLinkedList {
     void DeleteElems(DoublyLinkedListElem<T>*);
 
     DoublyLinkedListElem<T>* first() { return first_; }
+    DoublyLinkedListElem<T>* last();
 
     // Operations
     void Append(T);
@@ -83,6 +84,14 @@ void DoublyLinkedList<T>::DeleteElems(DoublyLinkedListElem<T>* elem) {
     DeleteElems(elem->next_);
   delete elem;
 }
+
+template <class T>
+DoublyLinkedListElem<T>* DoublyLinkedList<T>::last() {
+  if (first_ == nullptr)
+    return nullptr;
+  return first_->previous_;
+}
+
 
 template <class T>
 void DoublyLinkedList<T>::Append(T data) {

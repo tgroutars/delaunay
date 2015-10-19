@@ -42,7 +42,7 @@ void Mesh::DelaunayDC(int start, int end) {
   }
   int middle = (start + end) / 2.;
   if (size == 3) {
-    float is_left = TriangleArea(&vertices_[start], &vertices_[middle], &vertices_[end]);
+    float is_left = TriangleArea(Vertex(start), Vertex(middle), Vertex(end));
     if (is_left > 0) {
       BuildEdge(start, middle);
       BuildEdge(middle, end);
@@ -60,7 +60,40 @@ void Mesh::DelaunayDC(int start, int end) {
 }
 
 void Mesh::MergeMeshes(int start, int middle, int end) {
+  int lower_common_tangent[2], upper_common_tangent[2];
+
+  LowerCommonTangent(middle, middle + 1, lower_common_tangent);
+  cout << lower_common_tangent[0] << endl << lower_common_tangent[1];
+  cout << endl << endl;
+
   return;
+}
+
+void Mesh::LowerCommonTangent(int left, int right, int lct[2]) {
+  bool moved;
+
+  lct[0] = left;
+  lct[1] = right;
+
+  do {
+    moved = false;
+    int to_test;
+
+    to_test = edges_[lct[0]].last()->data();
+    while (TriangleArea(Vertex(lct[0]), Vertex(lct[1]), Vertex(to_test)) < 0) {
+      moved = true;
+      lct[0] = to_test;
+      to_test = edges_[lct[0]].last()->data();
+    }
+
+    to_test = edges_[lct[1]].first()->data();
+    while (TriangleArea(Vertex(lct[0]), Vertex(lct[1]), Vertex(to_test)) < 0) {
+      moved = true;
+      lct[1] = to_test;
+      to_test = edges_[lct[1]].first()->data();
+    }
+  } while (moved);
+
 }
 
 void Mesh::BuildEdge(int p1, int p2) {
