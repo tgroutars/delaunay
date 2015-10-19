@@ -63,21 +63,19 @@ void Mesh::MergeMeshes(int start, int middle, int end) {
   int lower_common_tangent[2], upper_common_tangent[2];
 
   LowerCommonTangent(middle, middle + 1, lower_common_tangent);
-  cout << lower_common_tangent[0] << endl << lower_common_tangent[1];
-  cout << endl << endl;
-
+  UpperCommonTangent(middle, middle + 1, upper_common_tangent);
   return;
 }
 
 void Mesh::LowerCommonTangent(int left, int right, int lct[2]) {
   bool moved;
+  int to_test;
 
   lct[0] = left;
   lct[1] = right;
 
   do {
     moved = false;
-    int to_test;
 
     to_test = edges_[lct[0]].last()->data();
     while (TriangleArea(Vertex(lct[0]), Vertex(lct[1]), Vertex(to_test)) < 0) {
@@ -91,6 +89,33 @@ void Mesh::LowerCommonTangent(int left, int right, int lct[2]) {
       moved = true;
       lct[1] = to_test;
       to_test = edges_[lct[1]].first()->data();
+    }
+  } while (moved);
+
+}
+
+void Mesh::UpperCommonTangent(int left, int right, int uct[2]) {
+  bool moved;
+  int to_test;
+
+  uct[0] = left;
+  uct[1] = right;
+
+  do {
+    moved = false;
+
+    to_test = edges_[uct[0]].first()->data();
+    while (TriangleArea(Vertex(uct[0]), Vertex(uct[1]), Vertex(to_test)) > 0) {
+      moved = true;
+      uct[0] = to_test;
+      to_test = edges_[uct[0]].first()->data();
+    }
+
+    to_test = edges_[uct[1]].last()->data();
+    while (TriangleArea(Vertex(uct[0]), Vertex(uct[1]), Vertex(to_test)) > 0) {
+      moved = true;
+      uct[1] = to_test;
+      to_test = edges_[uct[1]].last()->data();
     }
   } while (moved);
 

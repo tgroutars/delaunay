@@ -32,6 +32,7 @@ class Mesh {
     void BuildEdge(int, int);
     void StoreEdgesArray();
     void LowerCommonTangent(int, int, int[]);
+    void UpperCommonTangent(int, int, int[]);
     float* Vertex(int position) { return &vertices_[2 * position]; }
 
 
