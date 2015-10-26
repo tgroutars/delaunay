@@ -105,7 +105,7 @@ int main(int argc, char *argv[]) {
     vertices[i * 3 + 2] = 0.f;
   }
   int n_edges = mesh->n_edges();
-  GLuint *indices = new GLuint[n_edges];
+  GLuint *indices = new GLuint[n_edges * 2];
   int const *edges = mesh->edges();
   for (i=0; i<n_edges; i++) {
     indices[2 * i] = edges[2 * i];
@@ -119,7 +119,7 @@ int main(int argc, char *argv[]) {
   glGenBuffers(1, &VBO);
   glBindVertexArray(VAO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * n_edges * sizeof(int*), indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * n_edges * sizeof(GLuint*), indices, GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, 3 * size * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
