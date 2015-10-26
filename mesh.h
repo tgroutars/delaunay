@@ -7,12 +7,14 @@ class Mesh {
 
     // Number of Vertices
     int size_;
+    // Number of edges
     int n_edges_;
 
     // Arrays of vertices and edges in the mesh
-    float *vertices_;
+    // Length : size_ x 2
+    float **vertices_;
+    // Length : size_
     DoublyLinkedList<int> *edges_;
-    int *edges_array_;
 
     // Defines an outer rectangle
     float x_min_;
@@ -26,20 +28,22 @@ class Mesh {
     // Move points randomly to avoid colinear points
     void Shake();
 
+    // Sort points from left to right
+    void SortVertices();
+
     // Build the mesh
+    void CountEdges();
     void DelaunayDC(int, int);
     void MergeMeshes(int, int, int);
     void BuildEdge(int, int);
     void StoreEdgesArray();
     void LowerCommonTangent(int, int, int[]);
     void UpperCommonTangent(int, int, int[]);
-    float* Vertex(int position) { return &vertices_[2 * position]; }
-
 
   public:
 
     // Default Constructor
-    Mesh() : size_(0), n_edges_(0), vertices_(0), edges_(0), edges_array_(0) {}
+    Mesh() : size_(0), n_edges_(0), vertices_(0), edges_(0) {}
 
     // Destructor
     ~Mesh();
@@ -51,8 +55,8 @@ class Mesh {
     float x_min() const { return x_min_; }
     float y_max() const { return y_max_; }
     float y_min() const { return y_min_; }
-    const float* vertices() const { return vertices_; }
-    const int* edges() const { return edges_array_; }
+    void Vertices(float*);
+    void Edges(uint*);
 
     // Generate Delaunay Triangulation
     void Triangulate(const char*);

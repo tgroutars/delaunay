@@ -93,24 +93,22 @@ int main(int argc, char *argv[]) {
   // Vertices to display
   int size = mesh->size();
   GLfloat *vertices = new float[size * 3];
-  GLfloat const *mesh_vertices = mesh->vertices();
+  mesh->Vertices(vertices);
   GLfloat x_max = mesh->x_max(),
           x_min = mesh->x_min(),
           y_max = mesh->y_max(),
           y_min = mesh->y_min();
+
+  // Resize to fit in a [-1 1; -1 1] square
   int i;
   for (i=0; i<size; i++) {
-    vertices[i * 3] = (2. * mesh_vertices[i * 2] - (x_max + x_min)) / (x_max - x_min);
-    vertices[i * 3 + 1] = (2. * mesh_vertices[i * 2 + 1] - (y_max + y_min)) / (y_max - y_min);
-    vertices[i * 3 + 2] = 0.f;
+    vertices[i * 3] = (2. * vertices[i * 3] - (x_max + x_min)) / (x_max - x_min);
+    vertices[i * 3 + 1] = (2. * vertices[i * 3 + 1] - (y_max + y_min)) / (y_max - y_min);
   }
+
   int n_edges = mesh->n_edges();
   GLuint *indices = new GLuint[n_edges * 2];
-  int const *edges = mesh->edges();
-  for (i=0; i<n_edges; i++) {
-    indices[2 * i] = edges[2 * i];
-    indices[2 * i + 1] = edges[2 * i + 1];
-  }
+  mesh->Edges(indices);
 
   // Vertex Buffer Object
   GLuint VBO, VAO, EBO;
