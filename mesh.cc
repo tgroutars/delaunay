@@ -277,5 +277,13 @@ void Mesh::Edges(uint* indices) {
 }
 
 void Mesh::SortVertices() {
+  double *vertices_start = vertices_[0];
   sort(vertices_, vertices_ + size_, [](const double* v1, const double* v2) {return (v1[0] < v2[0]);});
+  double *temp = new double[2 * size_];
+  for (int i=0; i<size_; i++) {
+    temp[2 * i] = vertices_[i][0];
+    temp[2 * i + 1] = vertices_[i][1];
+    vertices_[i] = temp + 2 * i;
+  }
+  delete[] vertices_start;
 }
