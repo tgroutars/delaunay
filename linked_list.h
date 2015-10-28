@@ -129,15 +129,13 @@ DoublyLinkedListElem<T>* DoublyLinkedList<T>::FindElem(T data) {
   if (first_ == nullptr) {
     throw logic_error("Empty List");
   }
-  DoublyLinkedListElem<T> *elem;
-  elem = first_;
-  while (elem->data_ != data) {
+  DoublyLinkedListElem<T> *elem = first_;
+  do {
+    if (elem->data_ == data)
+      return elem;
     elem = elem->next_;
-    if (elem == first_) {
-      throw logic_error("Element not Found");
-    }
-  }
-  return elem;
+  } while (elem != first_);
+  throw logic_error("Element not Found");
 }
 
 template <class T>
