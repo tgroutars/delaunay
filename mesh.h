@@ -12,15 +12,15 @@ class Mesh {
 
     // Arrays of vertices and edges in the mesh
     // Length : size_ x 2
-    float **vertices_;
+    double **vertices_;
     // Length : size_
     DoublyLinkedList<int> *edges_;
 
     // Defines an outer rectangle
-    float x_min_;
-    float x_max_;
-    float y_min_;
-    float y_max_;
+    double x_min_;
+    double x_max_;
+    double y_min_;
+    double y_max_;
 
     // Initialize array of vertices from file
     void ReadFile(const char*);
@@ -36,9 +36,12 @@ class Mesh {
     void DelaunayDC(int, int);
     void MergeMeshes(int, int, int);
     void BuildEdge(int, int);
+    void DestroyEdge(int, int);
+
     void StoreEdgesArray();
     void LowerCommonTangent(int, int, int[]);
-    void UpperCommonTangent(int, int, int[]);
+    int RightCandidate(int, int);
+    int LeftCandidate(int, int);
 
   public:
 
@@ -50,12 +53,12 @@ class Mesh {
 
     // Getters
     int size() const { return size_; }
-    float n_edges() const { return n_edges_; }
-    float x_max() const { return x_max_; }
-    float x_min() const { return x_min_; }
-    float y_max() const { return y_max_; }
-    float y_min() const { return y_min_; }
-    void Vertices(float*);
+    double n_edges() const { return n_edges_; }
+    double x_max() const { return x_max_; }
+    double x_min() const { return x_min_; }
+    double y_max() const { return y_max_; }
+    double y_min() const { return y_min_; }
+    void Vertices(double*);
     void Edges(uint*);
 
     // Generate Delaunay Triangulation

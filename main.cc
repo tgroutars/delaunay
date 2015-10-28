@@ -7,6 +7,7 @@
 #include "main.h"
 #include "mesh.h"
 
+#define MAX(a, b) a > b ? a : b
 
 using namespace std;
 
@@ -92,18 +93,19 @@ int main(int argc, char *argv[]) {
 
   // Vertices to display
   int size = mesh->size();
-  GLfloat *vertices = new float[size * 3];
+  GLdouble *vertices = new GLdouble[size * 3];
   mesh->Vertices(vertices);
-  GLfloat x_max = mesh->x_max(),
+  GLdouble x_max = mesh->x_max(),
           x_min = mesh->x_min(),
           y_max = mesh->y_max(),
           y_min = mesh->y_min();
 
   // Resize to fit in a [-1 1; -1 1] square
   int i;
+  double delta = MAX((x_max - x_min), (y_max - y_min));
   for (i=0; i<size; i++) {
-    vertices[i * 3] = (2. * vertices[i * 3] - (x_max + x_min)) / (x_max - x_min);
-    vertices[i * 3 + 1] = (2. * vertices[i * 3 + 1] - (y_max + y_min)) / (y_max - y_min);
+    vertices[i * 3] = (2. * vertices[i * 3] - (x_max + x_min)) / delta;
+    vertices[i * 3 + 1] = (2. * vertices[i * 3 + 1] - (y_max + y_min)) / delta;
   }
 
   int n_edges = mesh->n_edges();
@@ -117,10 +119,10 @@ int main(int argc, char *argv[]) {
   glGenBuffers(1, &VBO);
   glBindVertexArray(VAO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * n_edges * sizeof(GLuint*), indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * n_edges * sizeof(GLuint), indices, GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, 3 * size * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glBufferData(GL_ARRAY_BUFFER, 3 * size * sizeof(GLdouble), vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_DOUBLE, GL_FALSE, 3 * sizeof(GLdouble), (GLvoid*)0);
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);

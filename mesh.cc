@@ -26,6 +26,8 @@ Mesh::~Mesh() {
 }
 
 void Mesh::Triangulate(const char* filename) {
+  // Initialize robust Predicates
+  robust_predicates::exactinit();
   ReadFile(filename);
   Shake();
   SortVertices();
@@ -44,7 +46,7 @@ void Mesh::DelaunayDC(int start, int end) {
   }
   int middle = (start + end) / 2;
   if (size == 3) {
-    float area = TriangleArea(vertices_[start], vertices_[middle], vertices_[end]);
+    double area = robust_predicates::orient2d(vertices_[start], vertices_[middle], vertices_[end]);
     if (area > 0) {
       BuildEdge(start, middle);
       BuildEdge(middle, end);
@@ -61,12 +63,76 @@ void Mesh::DelaunayDC(int start, int end) {
   MergeMeshes(start, middle, end);
 }
 
+int Mesh::RightCandidate(int vl, int vr) {
+
+  DoublyLinkedListElem<int> *candidate = edges_[vr].Predecessor(vl);
+
+  if (robust_predicates::orient2d(vertices_[vl], vertices_[vr], vertices_[candidate->data()]) <= 0.) {
+    return -1;
+  }
+  DoublyLinkedListElem<int> *next_candidate = candidate->previous();
+  double in_circle = robust_predicates::isincircle(vertices_[vl], vertices_[vr], vertices_[candidate->data()],
+                                                   vertices_[next_candidate->data()]);
+  if (in_circle <= 0) {
+    return candidate->data();
+  }
+
+  DestroyEdge(vr, candidate->data());
+  return RightCandidate(vl, vr);
+}
+
+int Mesh::LeftCandidate(int vl, int vr) {
+  DoublyLinkedListElem<int> *candidate = edges_[vl].Successor(vr);
+  if (robust_predicates::orient2d(vertices_[vl], vertices_[vr], vertices_[candidate->data()]) <= 0.) {
+    return -1;
+  }
+
+  DoublyLinkedListElem<int> *next_candidate = candidate->next();
+  double in_circle = robust_predicates::isincircle(vertices_[vl], vertices_[vr], vertices_[candidate->data()],
+                                                   vertices_[next_candidate->data()]);
+
+  if (in_circle <= 0) {
+    return candidate->data();
+  }
+  DestroyEdge(vl, candidate->data());
+  return LeftCandidate(vl, vr);
+}
+
 void Mesh::MergeMeshes(int start, int middle, int end) {
-  int lower_common_tangent[2], upper_common_tangent[2];
+  int lower_common_tangent[2];
 
   LowerCommonTangent(middle, middle + 1, lower_common_tangent);
-  UpperCommonTangent(middle, middle + 1, upper_common_tangent);
-  return;
+
+  int vl = lower_common_tangent[0], vr = lower_common_tangent[1],
+      vr1 = -1, vl1 = -1;
+
+  BuildEdge(vl, vr);
+  do {
+
+    vr1 = RightCandidate(vl, vr);
+    vl1 = LeftCandidate(vl, vr);
+
+    if (vl1 == -1 && vr1 == -1)
+      return;
+
+    if (vl1 != -1 && vr1 != -1) {
+      double in_circle = robust_predicates::isincircle(vertices_[vl], vertices_[vr], vertices_[vl1], vertices_[vr1]);
+      if (in_circle <= 0) {
+        vr1 = -1;
+      }
+    }
+
+    if (vr1 == -1) {
+      edges_[vr].InsertBefore(vl, vl1);
+      edges_[vl1].InsertAfter(vl, vr);
+      vl = vl1;
+    } else {
+      edges_[vl].InsertAfter(vr, vr1);
+      edges_[vr1].InsertBefore(vr, vl);
+      vr = vr1;
+    }
+
+  } while (true);
 }
 
 void Mesh::LowerCommonTangent(int left, int right, int lct[]) {
@@ -80,14 +146,14 @@ void Mesh::LowerCommonTangent(int left, int right, int lct[]) {
     moved = false;
 
     to_test = edges_[lct[0]].last()->data();
-    while (TriangleArea(vertices_[lct[0]], vertices_[lct[1]], vertices_[to_test]) < 0) {
+    while (robust_predicates::orient2d(vertices_[lct[0]], vertices_[lct[1]], vertices_[to_test]) < 0) {
       moved = true;
       lct[0] = to_test;
       to_test = edges_[lct[0]].last()->data();
     }
 
     to_test = edges_[lct[1]].first()->data();
-    while (TriangleArea(vertices_[lct[0]], vertices_[lct[1]], vertices_[to_test]) < 0) {
+    while (robust_predicates::orient2d(vertices_[lct[0]], vertices_[lct[1]], vertices_[to_test]) < 0) {
       moved = true;
       lct[1] = to_test;
       to_test = edges_[lct[1]].first()->data();
@@ -95,35 +161,14 @@ void Mesh::LowerCommonTangent(int left, int right, int lct[]) {
   } while (moved);
 }
 
-void Mesh::UpperCommonTangent(int left, int right, int uct[2]) {
-  bool moved;
-  int to_test;
-
-  uct[0] = left;
-  uct[1] = right;
-
-  do {
-    moved = false;
-
-    to_test = edges_[uct[0]].first()->data();
-    while (TriangleArea(vertices_[uct[0]], vertices_[uct[1]], vertices_[to_test]) > 0) {
-      moved = true;
-      uct[0] = to_test;
-      to_test = edges_[uct[0]].first()->data();
-    }
-
-    to_test = edges_[uct[1]].last()->data();
-    while (TriangleArea(vertices_[uct[0]], vertices_[uct[1]], vertices_[to_test]) > 0) {
-      moved = true;
-      uct[1] = to_test;
-      to_test = edges_[uct[1]].last()->data();
-    }
-  } while (moved);
-}
-
 void Mesh::BuildEdge(int p1, int p2) {
   edges_[p1].Prepend(p2);
   edges_[p2].Append(p1);
+}
+
+void Mesh::DestroyEdge(int p1, int p2) {
+  edges_[p1].Remove(p2);
+  edges_[p2].Remove(p1);
 }
 
 void Mesh::ReadFile(const char* filename) {
@@ -136,8 +181,8 @@ void Mesh::ReadFile(const char* filename) {
   }
 
   int i;
-  float x, y;
-  float dx, dy;
+  double x, y;
+  double dx, dy;
   string line;
 
   while (getline(points_file, line)) {
@@ -148,8 +193,8 @@ void Mesh::ReadFile(const char* filename) {
   points_file.seekg(0, ios::beg);
 
   edges_ = new DoublyLinkedList<int>[size_];
-  vertices_ = new float*[size_];
-  vertices_[0] = new float[2 * size_];
+  vertices_ = new double*[size_];
+  vertices_[0] = new double[2 * size_];
   for (i=1; i<size_; i++) {
     vertices_[i] = &vertices_[0][i * 2];
   }
@@ -182,12 +227,12 @@ void Mesh::ReadFile(const char* filename) {
 
 void Mesh::Shake() {
   int i;
-  float dx_max = (x_max_ - x_min_) * 1e-8,
+  double dx_max = (x_max_ - x_min_) * 1e-8,
         dy_max = (y_max_ - y_min_) * 1e-8;
 
   for (i=0; i<size_; i++) {
-    vertices_[i][0] += (((float) std::rand()) / RAND_MAX) * dx_max;
-    vertices_[i][1] += (((float) std::rand()) / RAND_MAX) * dy_max;
+    vertices_[i][0] += (((double) std::rand()) / RAND_MAX) * dx_max;
+    vertices_[i][1] += (((double) std::rand()) / RAND_MAX) * dy_max;
   }
 }
 
@@ -200,7 +245,7 @@ void Mesh::CountEdges() {
   n_edges_ /= 2;
 }
 
-void Mesh::Vertices(float* vertices) {
+void Mesh::Vertices(double* vertices) {
   for (int i=0; i<size_; i++) {
     vertices[3 * i] = vertices_[i][0];
     vertices[3 * i + 1] = vertices_[i][1];
@@ -231,5 +276,5 @@ void Mesh::Edges(uint* indices) {
 }
 
 void Mesh::SortVertices() {
-  sort(&vertices_[0], &vertices_[size_ - 1], [](const float* v1, const float* v2) {return v1[0] < v2[0];});
+  sort(vertices_, vertices_ + size_, [](const double* v1, const double* v2) {return (v1[0] < v2[0]);});
 }
