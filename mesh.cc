@@ -230,13 +230,10 @@ void Mesh::ReadFile(const char* filename) {
 }
 
 void Mesh::Shake() {
-  int i;
-  double dx_max = (x_max_ - x_min_) * 1e-8,
-        dy_max = (y_max_ - y_min_) * 1e-8;
-
-  for (i=0; i<size_; i++) {
-    vertices_[i][0] += (((double) std::rand()) / RAND_MAX) * dx_max;
-    vertices_[i][1] += (((double) std::rand()) / RAND_MAX) * dy_max;
+  double delta_max = MAX((x_max_ - x_min_), (y_max_ - y_min_)) * 1e-8;
+  for (int i=0; i<size_; i++) {
+    vertices_[i][0] += (((double) std::rand()) / RAND_MAX) * delta_max;
+    vertices_[i][1] += (((double) std::rand()) / RAND_MAX) * delta_max;
   }
 }
 
