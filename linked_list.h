@@ -168,6 +168,8 @@ void DoublyLinkedList<T>::InsertBefore(T next, T data) {
   new_elem = new DoublyLinkedListElem<T>(data, next_elem, next_elem->previous_);
   next_elem->previous_->next_ = new_elem;
   next_elem->previous_ = new_elem;
+  if (first_ == next_elem)
+    first_ = new_elem;
 }
 
 template <class T>

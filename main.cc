@@ -133,8 +133,8 @@ int main(int argc, char *argv[]) {
     glfwPollEvents();
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    glPointSize(5.0f);
-    glLineWidth(3.0f);
+    glPointSize(1.0f);
+    glLineWidth(1.0f);
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
     glDrawElements(GL_LINES, n_edges * 2, GL_UNSIGNED_INT, 0);

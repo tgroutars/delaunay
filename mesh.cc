@@ -63,45 +63,51 @@ void Mesh::DelaunayDC(int start, int end) {
   MergeMeshes(start, middle, end);
 }
 
-int Mesh::RightCandidate(int vl, int vr) {
-
+int Mesh::RightCandidate(int vl, int vr, int middle) {
   DoublyLinkedListElem<int> *candidate = edges_[vr].Predecessor(vl);
-
+  if (candidate->data() < middle + 1)
+    return -1;
   if (robust_predicates::orient2d(vertices_[vl], vertices_[vr], vertices_[candidate->data()]) <= 0.) {
     return -1;
   }
   DoublyLinkedListElem<int> *next_candidate = candidate->previous();
+  if (next_candidate->data() <= middle + 1)
+    return candidate->data();
   double in_circle = robust_predicates::isincircle(vertices_[vl], vertices_[vr], vertices_[candidate->data()],
                                                    vertices_[next_candidate->data()]);
-  if (in_circle <= 0) {
+  if (in_circle < 0) {
     return candidate->data();
   }
 
   DestroyEdge(vr, candidate->data());
-  return RightCandidate(vl, vr);
+  return RightCandidate(vl, vr, middle);
 }
 
-int Mesh::LeftCandidate(int vl, int vr) {
+int Mesh::LeftCandidate(int vl, int vr, int middle) {
   DoublyLinkedListElem<int> *candidate = edges_[vl].Successor(vr);
+  if (candidate->data() > middle)
+    return -1;
   if (robust_predicates::orient2d(vertices_[vl], vertices_[vr], vertices_[candidate->data()]) <= 0.) {
     return -1;
   }
 
   DoublyLinkedListElem<int> *next_candidate = candidate->next();
+  if (next_candidate->data() >= middle)
+    return candidate->data();
   double in_circle = robust_predicates::isincircle(vertices_[vl], vertices_[vr], vertices_[candidate->data()],
                                                    vertices_[next_candidate->data()]);
 
-  if (in_circle <= 0) {
+  if (in_circle < 0) {
     return candidate->data();
   }
   DestroyEdge(vl, candidate->data());
-  return LeftCandidate(vl, vr);
+  return LeftCandidate(vl, vr, middle);
 }
 
 void Mesh::MergeMeshes(int start, int middle, int end) {
   int lower_common_tangent[2];
 
-  LowerCommonTangent(middle, middle + 1, lower_common_tangent);
+  LowerCommonTangent(middle, lower_common_tangent);
 
   int vl = lower_common_tangent[0], vr = lower_common_tangent[1],
       vr1 = -1, vl1 = -1;
@@ -109,8 +115,8 @@ void Mesh::MergeMeshes(int start, int middle, int end) {
   BuildEdge(vl, vr);
   do {
 
-    vr1 = RightCandidate(vl, vr);
-    vl1 = LeftCandidate(vl, vr);
+    vr1 = RightCandidate(vl, vr, middle);
+    vl1 = LeftCandidate(vl, vr, middle);
 
     if (vl1 == -1 && vr1 == -1)
       return;
@@ -135,12 +141,12 @@ void Mesh::MergeMeshes(int start, int middle, int end) {
   } while (true);
 }
 
-void Mesh::LowerCommonTangent(int left, int right, int lct[]) {
+void Mesh::LowerCommonTangent(int middle, int lct[]) {
   bool moved;
   int to_test;
 
-  lct[0] = left;
-  lct[1] = right;
+  lct[0] = middle;
+  lct[1] = middle + 1;
 
   do {
     moved = false;
@@ -286,4 +292,11 @@ void Mesh::SortVertices() {
     vertices_[i] = temp + 2 * i;
   }
   delete[] vertices_start;
+}
+
+void Mesh::PrintEdges() {
+  for (int i=0; i<size_; i++) {
+    cout << i << " : ";
+    edges_[i].Print();
+  }
 }

@@ -39,9 +39,11 @@ class Mesh {
     void DestroyEdge(int, int);
 
     void StoreEdgesArray();
-    void LowerCommonTangent(int, int, int[]);
-    int RightCandidate(int, int);
-    int LeftCandidate(int, int);
+    void LowerCommonTangent(int, int[]);
+    int RightCandidate(int, int, int);
+    int LeftCandidate(int, int, int);
+    void PrintEdges();
+
 
   public:
 
