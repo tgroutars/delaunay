@@ -185,6 +185,7 @@ void Mesh::ReadFile(const char* filename) {
   double dx, dy;
   string line;
 
+  // Count lines in the file
   while (getline(points_file, line)) {
     size_++;
   }
@@ -192,6 +193,7 @@ void Mesh::ReadFile(const char* filename) {
   points_file.clear();
   points_file.seekg(0, ios::beg);
 
+  // Initializing edges and vertices arrays
   edges_ = new DoublyLinkedList<int>[size_];
   vertices_ = new double*[size_];
   vertices_[0] = new double[2 * size_];
@@ -199,6 +201,7 @@ void Mesh::ReadFile(const char* filename) {
     vertices_[i] = &vertices_[0][i * 2];
   }
 
+  // Read and store each vertex
   points_file >> x >> y;
   vertices_[0][0] = x;
   vertices_[0][1] = y;
@@ -215,6 +218,7 @@ void Mesh::ReadFile(const char* filename) {
     y_max_ = MAX(y_max_, y);
   }
 
+  // Define a frame around the vertices cloud
   dx = (x_max_ - x_min_) * 0.1;
   x_min_ = x_min_ - dx;
   x_max_ = x_max_ + dx;
