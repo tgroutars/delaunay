@@ -156,9 +156,7 @@ template <class T>
 void DoublyLinkedList<T>::InsertAfter(T previous, T data) {
   DoublyLinkedListElem<T> *previous_elem, *new_elem;
   previous_elem = FindElem(previous);
-  new_elem = new DoublyLinkedListElem<T>(data);
-  new_elem->next_ = previous_elem->next_;
-  new_elem->previous_ = previous_elem;
+  new_elem = new DoublyLinkedListElem<T>(data, previous_elem->next_, previous_elem);
   previous_elem->next_->previous_ = new_elem;
   previous_elem->next_ = new_elem;
 }
@@ -167,9 +165,7 @@ template <class T>
 void DoublyLinkedList<T>::InsertBefore(T next, T data) {
   DoublyLinkedListElem<T> *next_elem, *new_elem;
   next_elem = FindElem(next);
-  new_elem = new DoublyLinkedListElem<T>(data);
-  new_elem->next_ = next_elem;
-  new_elem->previous_ = next_elem->previous_;
+  new_elem = new DoublyLinkedListElem<T>(data, next_elem, next_elem->previous_);
   next_elem->previous_->next_ = new_elem;
   next_elem->previous_ = new_elem;
 }
