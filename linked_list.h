@@ -140,23 +140,15 @@ DoublyLinkedListElem<T>* DoublyLinkedList<T>::FindElem(T data) {
 
 template <class T>
 void DoublyLinkedList<T>::Remove(T data) {
-  // cout << "Removing Element" << endl;
-  // cout << "data : " << data << endl;
   DoublyLinkedListElem<T> *elem = FindElem(data);
-  // cout << "elem->data : " << elem->data_ << endl;
-  // cout << "previous : " << elem->previous_->data_ << endl;
-  // cout << "next : " << elem->next_->data_ << endl;
   if (elem->next_ == elem) {
     first_ = nullptr;
   } else {
     elem->previous_->next_ = elem->next_;
     elem->next_->previous_ = elem->previous_;
-    if (elem == first_) {
+    if (elem == first_)
       first_ = elem->next_;
-    }
   }
-  // this->Print();
-  // cout << endl;
   delete elem;
 }
 
