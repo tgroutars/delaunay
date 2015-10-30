@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <string>
 #define GLEW_STATIC
@@ -30,9 +31,14 @@ const GLchar* fragmentShaderSource = "#version 330 core\n"
   "}\n\0";
 
 
-const char *filename = "2.in";
-
 int main(int argc, char *argv[]) {
+
+  if (argc != 2) {
+    cout << "Wrong number of arguments" << endl;
+    exit(69);
+  }
+
+  const char *filename = argv[1];
 
   // Create Mesh
   Mesh *mesh = new Mesh;

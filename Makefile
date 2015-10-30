@@ -7,7 +7,7 @@ LFLAGS = -Wall -std=gnu++0x $(DEBUG)
 BUILDDIR = _build
 EXEC = $(BUILDDIR)/mesh_gen
 
-all: prog clean run
+all: prog clean
 
 prog: $(OBJS)
 	$(CC) $(LFLAGS) $(OBJS) -o $(EXEC) $(GLLIBS)

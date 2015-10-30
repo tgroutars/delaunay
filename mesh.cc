@@ -180,7 +180,6 @@ void Mesh::DestroyEdge(int p1, int p2) {
 void Mesh::ReadFile(const char* filename) {
   size_ = 0;
   ifstream points_file (filename);
-
   if (!points_file.is_open()) {
     cout << "Unable to open file " << filename << endl;
     exit(69);
